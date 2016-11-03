@@ -22,6 +22,8 @@ public class CalculatorActivity extends Activity implements OnClickListener {
     private String sign;
     private boolean error;
     private boolean reset;
+    private boolean used1;
+    private boolean used2;
 
 
     @Override
@@ -72,6 +74,8 @@ public class CalculatorActivity extends Activity implements OnClickListener {
             sign = savedInstanceState.getString("sign");
             result.setText(savedInstanceState.getString("result"));
             reset = savedInstanceState.getBoolean("reset");
+            used1 = savedInstanceState.getBoolean("used1");
+            used2 = savedInstanceState.getBoolean("used2");
 
         } else {
             param1 = 0;
@@ -79,6 +83,8 @@ public class CalculatorActivity extends Activity implements OnClickListener {
             sign = "";
             result.setText("0");
             reset = false;
+            used1 = false;
+            used2 = false;
         }
 
     }
@@ -120,31 +126,43 @@ public class CalculatorActivity extends Activity implements OnClickListener {
                 sign = "";
                 param2 = 0;
                 param1 = 0;
+                used1 = false;
+                used2 = false;
                 result.setText("0");
                 break;
             case R.id.add:
-                if (sign != "") {
+                if (!sign.equals("")) {
                     Continuing();
                 }
-                sign = "+";
+                if (used1) {
+                    sign = "+";
+                }
                 break;
             case R.id.sub:
-                if (sign != "") {
+                if (!sign.equals("")) {
                     Continuing();
                 }
-                sign = "-";
+                if (used1) {
+                    sign = "-";
+                }
                 break;
             case R.id.div:
-                if (sign != "") {
+                if (!sign.equals("") && used2) {
                     Continuing();
+                    used2 = false;
+                    System.out.println("LOL");
                 }
-                sign = "/";
+                if (used1) {
+                    sign = "/";
+                }
                 break;
             case R.id.mul:
-                if (sign != "") {
+                if (!sign.equals("")) {
                     Continuing();
                 }
-                sign = "*";
+                if (used1) {
+                    sign = "*";
+                }
                 break;
             case R.id.eqv:
                 Continuing();
@@ -154,14 +172,18 @@ public class CalculatorActivity extends Activity implements OnClickListener {
     }
 
     public void Checking(float num) {
-        if (sign.equals("") && reset == true) {
+        if (sign.equals("") && reset) {
             param1 = 0;
+            used1 = false;
+            used2 = false;
         }
         reset = false;
         if (sign.equals("")) {
+            used1 = true;
             param1 = param1 * 10 + num;
             setResult(param1);
         } else {
+            used2 = true;
             param2 = param2 * 10 + num;
             setResult(param2);
         }
@@ -215,5 +237,7 @@ public class CalculatorActivity extends Activity implements OnClickListener {
         outState.putString("sign",sign);
         outState.putString("result", result.getText().toString());
         outState.putBoolean("reset",reset);
+        outState.putBoolean("used1", used1);
+        outState.putBoolean("used2", used2);
     }
 }
